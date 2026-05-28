@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications of DEs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root { --bg: #faf8f3; --surface: #ffffff; --border: #e2ddd4; --ink: #1a1714; --ink-mid: #5a5245; --accent: #b8860b; --accent-bg: #fdf8ee; --radius: 12px; }
+        body { background: var(--bg); color: var(--ink); font-family: 'Nunito', sans-serif; line-height: 1.7; padding: 2rem 1rem; }
+        .container { max-width: 850px; margin: 0 auto; }
+        header { margin-bottom: 2.5rem; border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-family: 'Lora', serif; font-size: 2.2rem; }
+        .back-btn { text-decoration: none; color: var(--ink-mid); font-weight: 600; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; }
+        h2 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); }
+        .formula-block { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        
+        ol, ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+
+        .quiz-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 1.5rem; margin-top: 2.5rem; }
+        .quiz-option { display: block; background: var(--surface); border: 1px solid #cbd5e1; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem; cursor: pointer; transition: 0.2s; }
+        .quiz-option:hover { background: #f1f5f9; }
+        .submit-btn { background: var(--ink); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; margin-top: 1rem; cursor: pointer; }
+        .feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-weight: 600; display: none; }
+        .correct { background: #f0fdf4; color: #1e5c3a; border: 1px solid #bbf7d0; }
+        .incorrect { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+
+        body.dark-theme {
+            --bg: #121110;
+            --surface: #1c1a18;
+            --border: #33302b;
+            --ink: #e6e1da;
+            --ink-mid: #a69e94;
+            --accent: #dfa929;
+            --accent-bg: #26221a;
+        }
+        body { transition: background 0.3s, color 0.3s; }
+    </style>
+</head>
+<body>
+    <script>
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Real-World Applications</h1>
+                <p style="color:var(--ink-mid)">Chapter 8: Cross-Disciplinary Differential Modeling</p>
+            </div>
+            <a href="de.html" class="back-btn">&larr; DE Hub</a>
+        </header>
+        <main>
+            
+            <div class="card">
+                <h2>1. Physics: Kinematics & Free Fall</h2>
+                <p>Newton's Second Law ($F = ma$) is fundamentally a differential equation, because acceleration $a$ is the derivative of velocity $v$ with respect to time $t$ ($a = \frac{dv}{dt}$).</p>
+                <p>If an object is falling through the atmosphere, it experiences gravity pulling it down and air resistance pushing back up (proportional to its velocity). The equation governing its speed is a <b>Linear First-Order Equation</b>:</p>
+                <div class="formula-block" style="border-left-color: #2563eb; background: #eff6ff;">
+                    $$m\frac{dv}{dt} = mg - kv$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $m$ is mass, $g$ is gravity, and $k$ is the aerodynamic drag coefficient.</i></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>2. Biology: Population Dynamics</h2>
+                <p>If a population has unlimited resources, it grows exponentially. However, environments have a maximum capacity they can sustain, known as the carrying capacity ($K$).</p>
+                <p>The <b>Logistic Growth Model</b> is a non-linear differential equation (specifically, a <b>Bernoulli Equation</b>) that models how a population $P$ grows quickly at first, but slows down as it approaches the limit $K$:</p>
+                <div class="formula-block" style="border-left-color: #16a34a; background: #f0fdf4;">
+                    $$\frac{dP}{dt} = rP\left(1 - \frac{P}{K}\right)$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $r$ is the natural growth rate. Notice that as $P$ gets closer to $K$, the term in parentheses approaches zero.</i></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>3. Electrical Engineering: Circuit Analysis</h2>
+                <p>Differential equations dictate how electricity flows through components over time. In a simple RL (Resistor-Inductor) circuit, Kirchhoff's Voltage Law states that the sum of voltage drops must equal the voltage supplied by the battery $V(t)$.</p>
+                <p>The current $i$ in the circuit is governed by a <b>Linear First-Order Equation</b>:</p>
+                <div class="formula-block" style="border-left-color: #d97706; background: #fffbeb;">
+                    $$L\frac{di}{dt} + Ri = V(t)$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $L$ is inductance and $R$ is resistance. This is usually solved using the Integrating Factor method.</i></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>4. Thermodynamics: Newton's Law of Cooling</h2>
+                <p>Whether it is a cup of coffee cooling in a room or a forged piece of steel quenching in an oil bath, the rate at which an object changes temperature is directly proportional to the difference between its own temperature ($T$) and the ambient environment temperature ($T_m$).</p>
+                <p>This creates a highly reliable <b>Separable Differential Equation</b>:</p>
+                <div class="formula-block" style="border-left-color: #dc2626; background: #fef2f2;">
+                    $$\frac{dT}{dt} = -k(T - T_m)$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $k$ is the thermal conductivity constant of the object. Integrating this yields a logarithmic decay curve.</i></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>5. Chemistry & Fluid Systems: Mixture Problems</h2>
+                <p>A classic engineering problem involves a tank containing a volume of fluid. A chemical solution is pumped in at a specific rate and concentration, mixes instantly, and drains out at another rate. We use a <b>Linear Equation</b> to track the exact mass of the chemical $A(t)$ remaining in the tank.</p>
+                <div class="formula-block" style="border-left-color: #0d9488; background: #f0fdfa;">
+                    $$\frac{dA}{dt} = (\text{Rate In}) - (\text{Rate Out})$$
+                    $$\frac{dA}{dt} = c_{in}r_{in} - \left(\frac{A}{V(t)}\right)r_{out}$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $c_{in}$ is the incoming concentration, $r$ represents flow rates, and $V(t)$ is the dynamic volume of the tank.</i></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>6. Economics: Continuous Compound Interest</h2>
+                <p>If a bank compounds your interest annually, monthly, or daily, you use standard algebra. But what if the interest is compounding continuously—every single fraction of a microsecond?</p>
+                <p>The rate of change of your account balance ($B$) becomes strictly proportional to the amount currently in the account. This yields the simplest <b>Separable Equation</b> of them all:</p>
+                <div class="formula-block" style="border-left-color: #4f46e5; background: #eef2ff;">
+                    $$\frac{dB}{dt} = rB$$
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><i>Where $r$ is the continuous interest rate. Solving this by separating variables directly results in the famous PERT equation: $B(t) = B_0 e^{rt}$.</i></p>
+                </div>
+            </div>
+
+            <div class="quiz-section">
+                <h3>Diagnostic Check: Matching the Model</h3>
+                <p>A forensic scientist arrives at a crime scene and measures a victim's body temperature, then measures it again an hour later. They want to calculate the exact time of death. Which differential equation model will they use to trace the temperature backward in time?</p>
+                
+                <label class="quiz-option"><input type="radio" name="q" value="A"> Logistic Growth ($dP/dt = rP(1 - P/K)$)</label>
+                <label class="quiz-option"><input type="radio" name="q" value="B"> Newton's Law of Cooling ($dT/dt = -k(T - T_m)$)</label>
+                <label class="quiz-option"><input type="radio" name="q" value="C"> Fluid Mixing Model ($dA/dt = \text{Rate In} - \text{Rate Out}$)</label>
+                <label class="quiz-option"><input type="radio" name="q" value="D"> RL Circuit Analysis ($L \cdot di/dt + Ri = V(t)$)</label>
+                
+                <button class="submit-btn" onclick="checkAnswer('B')">Submit Diagnostic</button>
+                <div id="fb" class="feedback"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function checkAnswer(correct) {
+            const opts = document.getElementsByName('q');
+            let sel = null;
+            for(let o of opts) { if(o.checked) sel = o.value; }
+            const fb = document.getElementById('fb');
+            if(!sel) { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="Please select an operational profile before submitting."; 
+                fb.style.display="block"; 
+                return; 
+            }
+            if(sel === correct) { 
+                fb.className="feedback correct"; 
+                fb.innerHTML="<b>Correct!</b> Newton's Law of Cooling dictates that the body will lose heat at a rate proportional to the difference between its temperature and the ambient room temperature. By solving this Separable equation, the scientist can calculate the exact constant $k$ and trace the time back to standard human body temperature ($37^\\circ$C)."; 
+                
+                // Trigger course progress tracker
+                localStorage.setItem('ch8_complete', 'true');
+            }
+            else { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="<b>Incorrect.</b> We are looking for a model that deals with temperature decaying toward an ambient baseline. Review the thermodynamics section."; 
+            }
+            fb.style.display="block";
+        }
+    </script>
+</body>
+</html>

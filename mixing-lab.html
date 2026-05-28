@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Mixing Simulation Lab | DE Suite</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg: #faf8f3;
+            --surface: #ffffff;
+            --border: #e2ddd4;
+            --ink: #1a1714;
+            --ink-mid: #5a5245;
+            --accent: #2563eb;
+            --accent-bg: #eff6ff;
+            --success: #16a34a;
+            --error: #dc2626;
+            --radius: 12px;
+            --font-display: 'Lora', serif;
+            --font-body: 'Nunito', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { font-family: var(--font-display); font-size: 2rem; color: var(--ink); }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--ink-mid);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+        /* Presets Grid */
+        .presets-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .preset-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .preset-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .preset-card h3 { font-family: var(--font-display); margin-bottom: 0.25rem; color: var(--accent); }
+        .preset-card p { font-size: 0.85rem; color: var(--ink-mid); }
+
+        /* Workspace Layout */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media(max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
+
+        /* Control Panel Card */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .panel h2 { font-family: var(--font-display); margin-bottom: 1.25rem; font-size: 1.35rem; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .input-group label { font-size: 0.85rem; font-weight: 600; color: var(--ink-mid); }
+        .input-group input {
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+        }
+        .input-group input:focus { border-color: var(--accent); outline: none; }
+
+        .sim-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e5e7eb; color: var(--ink); }
+        .btn-secondary:hover { background: #d1d5db; }
+
+        /* Animation & Analytics Deck */
+        .visual-deck {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .canvas-container {
+            background: #1e293b;
+            border-radius: var(--radius);
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        canvas { background: #0f172a; border-radius: 6px; max-width: 100%; }
+
+        .live-metrics {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+        .metric-card { padding: 0.5rem; border-right: 1px solid var(--border); }
+        .metric-card:last-child { border-right: none; }
+        .metric-label { font-size: 0.8rem; font-weight: 600; color: var(--ink-mid); text-transform: uppercase; }
+        .metric-val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; color: var(--ink); margin-top: 0.25rem; }
+
+        /* Formula Card */
+        .math-card {
+            background: #fdfdfd;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .status-pill {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+        .status-overflow { background: #fef2f2; color: var(--error); display: block; }
+        .status-empty { background: #fffbeb; color: #b45309; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Fluid Mixing Dynamic Lab</h1>
+                <p style="color: var(--ink-mid); font-size: 0.95rem;">First-Order Linear Non-Homogeneous Modelling Suite</p>
+            </div>
+            <a href="de.html" class="back-btn">&larr; DE Hub</a>
+        </header>
+
+        <div class="presets-bar">
+            <div class="preset-card" onclick="loadPreset(1)">
+                <h3>Lecture Example 1</h3>
+                <p><strong>Constant Volume:</strong> 600L Tank, 150L Initial Fluid, 30kg Flavour Agent. Inflow = Outflow = 2 L/min.</p>
+            </div>
+            <div class="preset-card" onclick="loadPreset(2)">
+                <h3>Lecture Example 2</h3>
+                <p><strong>Fills Up:</strong> 120L Tank, 40L Initial Mixture, 2kg Juice. Inflow (3 L/min) > Outflow (2 L/min).</p>
+            </div>
+            <div class="preset-card" onclick="loadPreset(3)">
+                <h3>Lecture Example 3</h3>
+                <p><strong>Empties Out:</strong> 120 Gal Basin, 50 Gal Initial, 200oz Pollutant. Inflow (4) &lt; Outflow (7).</p>
+            </div>
+        </div>
+
+        <div class="workspace">
+            <div class="panel">
+                <h2>Simulation Parameters</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Max Tank Capacity ($V_{max}$)</label>
+                        <input type="number" id="vMax" value="120" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Initial Volume ($V_0$)</label>
+                        <input type="number" id="v0" value="40" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Initial Sub. Mass ($A_0$)</label>
+                        <input type="number" id="a0" value="2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Inflow Concentration ($C_{in}$)</label>
+                        <input type="number" id="cIn" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Inflow Rate ($R_{in}$)</label>
+                        <input type="number" id="rIn" value="3" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Outflow Rate ($R_{out}$)</label>
+                        <input type="number" id="rOut" value="2" step="any">
+                    </div>
+                </div>
+
+                <div class="sim-actions">
+                    <button class="btn btn-primary" id="playPauseBtn" onclick="toggleSim()">Start Simulation</button>
+                    <button class="btn btn-secondary" onclick="resetSim()">Reset</button>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 1rem;">
+                    <label>Simulation Speed Multiplier</label>
+                    <input type="range" id="speedSlider" min="1" max="20" value="5" oninput="updateSpeedLabel(this.value)">
+                    <span style="font-size: 0.8rem; text-align: right; color: var(--ink-mid)" id="speedLabel">5x Time Warp</span>
+                </div>
+
+                <div class="math-card">
+                    <p style="font-weight: 700; margin-bottom: 0.5rem;">Governing Initial Value Problem (IVP):</p>
+                    $$\frac{dA}{dt} = R_{in} \cdot C_{in} - \left(\frac{A(t)}{V_0 + (R_{in} - R_{out})t}\right) \cdot R_{out}$$
+                    <div id="analyticalSolutionBox" style="margin-top: 0.75rem; color: var(--accent); font-size: 0.85rem; font-family: var(--font-mono)">
+                        Select a preset example above to see the precise analytical solution steps mapped from your course lectures.
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-deck">
+                <div class="canvas-container">
+                    <canvas id="tankCanvas" width="450" height="320"></canvas>
+                </div>
+
+                <div class="live-metrics">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Time Elapsed</div>
+                            <div class="metric-val" id="mTime">0.0m</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Fluid Volume</div>
+                            <div class="metric-val" id="mVolume">0.0L</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Mass Amount (A)</div>
+                            <div class="metric-val" id="mMass">0.00kg</div>
+                        </div>
+                    </div>
+                    <div id="statusAlert" class="status-pill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Simulation State Machine Engine
+            let animId = null;
+            let isRunning = false;
+            let t = 0;
+            let currentPreset = null;
+
+            // DOM Hook Points
+            const canvas = document.getElementById('tankCanvas');
+            const ctx = canvas.getContext('2d');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const statusAlert = document.getElementById('statusAlert');
+            const solutionBox = document.getElementById('analyticalSolutionBox');
+
+            // Inputs
+            const elVMax = document.getElementById('vMax');
+            const elV0 = document.getElementById('v0');
+            const elA0 = document.getElementById('a0');
+            const elCIn = document.getElementById('cIn');
+            const elRIn = document.getElementById('rIn');
+            const elROut = document.getElementById('rOut');
+            const speedSlider = document.getElementById('speedSlider');
+
+            window.updateSpeedLabel = function(val) {
+                document.getElementById('speedLabel').textContent = val + "x Time Warp";
+            };
+
+            // Analytical matching calculations directly mimicking lecture solutions
+            function getAnalyticalValue(preset, time) {
+                if (preset === 1) {
+                    // Example 1: A(t) = 750 - 720 * e^(-t/75)
+                    return 750 - 720 * Math.exp(-time / 75);
+                } else if (preset === 2) {
+                    // Example 2: A(t) = (40 + t) - 60800 / (40 + t)^2
+                    let vol = 40 + time;
+                    return vol - (60800 / Math.pow(vol, 2));
+                } else if (preset === 3) {
+                    // Example 3: A(t) = 2*(50 - 3t) + 100 * ((50 - 3t)/50)^(7/3)
+                    let base = 50 - 3 * time;
+                    if (base <= 0) return 0;
+                    return 2 * base + 100 * Math.pow(base / 50, 7/3);
+                }
+                return null;
+            }
+
+            window.loadPreset = function(num) {
+                resetSim();
+                currentPreset = num;
+                if (num === 1) {
+                    elVMax.value = 600; elV0.value = 150; elA0.value = 30;
+                    elCIn.value = 5; elRIn.value = 2; elROut.value = 2;
+                    solutionBox.innerHTML = "<b>Analytical Solution (IF):</b><br>IF = e^(t/75)<br>A(t) = 750 - 720e^(-t/75)<br>At 180s (3m): A(3) ≈ 58.21 kg";
+                } else if (num === 2) {
+                    elVMax.value = 120; elV0.value = 40; elA0.value = 2;
+                    elCIn.value = 1; elRIn.value = 3; elROut.value = 2;
+                    solutionBox.innerHTML = "<b>Analytical Solution (Linear):</b><br>IF = (40+t)²<br>A(t) = (40+t) - 60800/(40+t)²<br>At 10m: A(10) = 25.68 kg<br>Overflow occurs at t = 80 min.";
+                } else if (num === 3) {
+                    elVMax.value = 120; elV0.value = 50; elA0.value = 200;
+                    elCIn.value = 2; elRIn.value = 4; elROut.value = 7;
+                    solutionBox.innerHTML = "<b>Analytical Solution (Fractional IF):</b><br>IF = (50-3t)^(-7/3)<br>A(t) = 2(50-3t) + 100[(50-3t)/50]^(7/3)<br>Basin empties at t = 16.67 min.";
+                }
+                if (window.MathJax) MathJax.typeset();
+                drawTank(elV0.value, elA0.value);
+            };
+
+            window.toggleSim = function() {
+                if (isRunning) {
+                    isRunning = false;
+                    playPauseBtn.textContent = "Resume Simulation";
+                    cancelAnimationFrame(animId);
+                } else {
+                    isRunning = true;
+                    playPauseBtn.textContent = "Pause Simulation";
+                    simulationStep();
+                    
+                    // Core Telemetry Registration for OmniHub Dashboard synchronization
+                    try {
+                        let metrics = JSON.parse(localStorage.getItem('portal_telemetry_metrics')) || { totalInteractions: 0, pageViews: {} };
+                        metrics.totalInteractions++;
+                        metrics.pageViews['mixing-lab'] = (metrics.pageViews['mixing-lab'] || 0) + 1;
+                        localStorage.setItem('portal_telemetry_metrics', JSON.stringify(metrics));
+                    } catch(e) {}
+                }
+            };
+
+            window.resetSim = function() {
+                isRunning = false;
+                playPauseBtn.textContent = "Start Simulation";
+                cancelAnimationFrame(animId);
+                t = 0;
+                statusAlert.className = "status-pill";
+                statusAlert.style.display = "none";
+                
+                document.getElementById('mTime').textContent = "0.0m";
+                document.getElementById('mVolume').textContent = parseFloat(elV0.value).toFixed(1);
+                document.getElementById('mMass').textContent = parseFloat(elA0.value).toFixed(2);
+                drawTank(parseFloat(elV0.value), parseFloat(elA0.value));
+            };
+
+            function simulationStep() {
+                if (!isRunning) return;
+
+                const vMax = parseFloat(elVMax.value);
+                const v0 = parseFloat(elV0.value);
+                const a0 = parseFloat(elA0.value);
+                const cIn = parseFloat(elCIn.value);
+                const rIn = parseFloat(elRIn.value);
+                const rOut = parseFloat(elROut.value);
+                const speed = parseFloat(speedSlider.value);
+
+                // dt time-slice evolution
+                t += (1 / 60) * (speed / 5);
+
+                const currentVolume = v0 + (rIn - rOut) * t;
+                let currentMass = 0;
+
+                // Analytical valuation check fallback vs RK4 approximation loops
+                let directMath = getAnalyticalValue(currentPreset, t);
+                if (directMath !== null) {
+                    currentMass = directMath;
+                } else {
+                    // Numerical dynamic fall-back approximation evaluation
+                    let netFlow = rIn - rOut;
+                    if (netFlow === 0) {
+                        let factor = Math.exp(-(rOut / v0) * t);
+                        currentMass = (rIn * cIn * (v0 / rOut)) * (1 - factor) + a0 * factor;
+                    } else {
+                        let pVal = rOut / netFlow;
+                        let constC = (a0 - (rIn * cIn * v0) / (netFlow + rOut)) * Math.pow(v0, pVal);
+                        currentMass = (rIn * cIn * currentVolume) / (netFlow + rOut) + constC / Math.pow(currentVolume, pVal);
+                    }
+                }
+
+                // Boundary Constraint Checks
+                if (currentVolume >= vMax) {
+                    isRunning = false;
+                    statusAlert.textContent = "ALERT: Tank physical capacity overflow thresholds breached!";
+                    statusAlert.className = "status-pill status-overflow";
+                    playPauseBtn.textContent = "Simulation Ended";
+                    return;
+                }
+                if (currentVolume <= 0 || currentMass < 0) {
+                    isRunning = false;
+                    document.getElementById('mVolume').textContent = "0.0";
+                    document.getElementById('mMass').textContent = "0.00";
+                    statusAlert.textContent = "ALERT: Liquid contents fully evacuated from tank infrastructure.";
+                    statusAlert.className = "status-pill status-empty";
+                    playPauseBtn.textContent = "Simulation Ended";
+                    drawTank(0, 0);
+                    return;
+                }
+
+                // Update Display metrics
+                document.getElementById('mTime').textContent = t.toFixed(1) + "m";
+                document.getElementById('mVolume').textContent = currentVolume.toFixed(1);
+                document.getElementById('mMass').textContent = currentMass.toFixed(2);
+
+                drawTank(currentVolume, currentMass);
+                animId = requestAnimationFrame(simulationStep);
+            }
+
+            function drawTank(volume, mass) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                const vMax = parseFloat(elVMax.value) || 100;
+                const fillPct = Math.min(volume / vMax, 1);
+                const concentration = volume > 0 ? (mass / volume) : 0;
+
+                // Configuration boundaries for the rendered tank layout canvas
+                const tankX = 150, tankY = 60, tankWidth = 150, tankHeight = 200;
+
+                // Color calculation shifting based on content mass saturation density
+                let densityFactor = Math.min(concentration / 4, 1);
+                let fluidColor = `rgba(37, 99, 235, ${0.3 + densityFactor * 0.7})`;
+
+                // 1. Draw Pipes flowing into container boundaries
+                ctx.lineWidth = 14;
+                ctx.strokeStyle = isRunning && parseFloat(elRIn.value) > 0 ? '#38bdf8' : '#475569';
+                ctx.beginPath(); ctx.moveTo(50, 80); ctx.lineTo(152, 80); ctx.stroke();
+
+                ctx.strokeStyle = isRunning && parseFloat(elROut.value) > 0 && volume > 0 ? fluidColor : '#475569';
+                ctx.beginPath(); ctx.moveTo(298, 240); ctx.lineTo(400, 240); ctx.stroke();
+
+                // 2. Render internal liquid fluid mass calculations
+                if (fillPct > 0) {
+                    ctx.fillStyle = fluidColor;
+                    let currentFluidHeight = tankHeight * fillPct;
+                    ctx.fillRect(tankX + 2, tankY + tankHeight - currentFluidHeight, tankWidth - 4, currentFluidHeight);
+                }
+
+                // 3. Render physical structural containment lines
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.beginPath();
+                ctx.moveTo(tankX, tankY);
+                ctx.lineTo(tankX, tankY + tankHeight);
+                ctx.lineTo(tankX + tankWidth, tankY + tankHeight);
+                ctx.lineTo(tankX + tankWidth, tankY);
+                ctx.stroke();
+
+                // 4. Text Overlay tracking metrics directly over canvas space
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = "12px 'IBM Plex Mono'";
+                ctx.fillText(`Inflow: ${elRIn.value}L/min @ ${elCIn.value}kg/L`, 30, 60);
+                ctx.fillText(`Outflow: ${elROut.value}L/min`, 290, 220);
+                ctx.fillText(`Max Capacity: ${vMax}`, tankX, tankY - 15);
+            }
+
+            // Init System startup canvas paint loop execution
+            loadPreset(2);
+        })();
+    </script>
+</body>
+</html>
