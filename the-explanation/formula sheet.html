@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability & Statistics — Key Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f3;
+    --surface: #ffffff;
+    --border: #e2ddd4;
+    --border-light: #ede9e2;
+    --ink: #1a1714;
+    --ink-mid: #4a453e;
+    --ink-soft: #8a847a;
+    --red: #c0392b;
+    --red-light: #fdf1f0;
+    --gold: #b8860b;
+    --gold-light: #fdf8ee;
+    --blue: #1a4b7a;
+    --blue-light: #eef4fb;
+    --green: #1e5c3a;
+    --green-light: #eef7f2;
+    --purple: #4a2580;
+    --purple-light: #f3eefb;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    padding: 56px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .header-left .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--red);
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  /* Layout */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .full { grid-column: 1 / -1; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .card-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+  }
+
+  .card-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .badge {
+    margin-left: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .badge-hot { background: var(--red-light); color: var(--red); border: 1px solid #f5c6c2; }
+  .badge-core { background: var(--gold-light); color: var(--gold); border: 1px solid #f0dfa0; }
+  .badge-theory { background: var(--blue-light); color: var(--blue); border: 1px solid #c0d8f0; }
+  .badge-stats { background: var(--green-light); color: var(--green); border: 1px solid #b8dfc8; }
+  .badge-link { background: var(--purple-light); color: var(--purple); border: 1px solid #c8b8e8; }
+
+  /* Content within cards */
+  .concept-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .concept-list li {
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.5;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .concept-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  .concept-list li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border-light);
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--blue);
+    line-height: 1.8;
+  }
+
+  /* Distribution table */
+  .dist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .dist-item {
+    padding: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 3px;
+    background: var(--bg);
+  }
+
+  .dist-name {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .dist-notation {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  .dist-facts {
+    font-size: 12px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+
+  /* Spotlight box */
+  .spotlight {
+    background: var(--red-light);
+    border: 1.5px solid #e8b4b0;
+    border-radius: 4px;
+    padding: 20px 24px;
+  }
+
+  .spotlight .card-header {
+    border-bottom-color: #e8c0bc;
+  }
+
+  .spotlight-body {
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+  }
+
+  .spotlight-body .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    background: var(--red);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Two-col within card */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .mini-section {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  /* Connections */
+  .connections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .conn-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 400;
+    border: 1px solid;
+    color: var(--ink-mid);
+    background: var(--bg);
+    border-color: var(--border);
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .conn-pill span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-right: 4px;
+  }
+
+  /* Footer note */
+  .footer-note {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width: 800px) {
+    .grid, .grid-3, .two-col { grid-template-columns: 1fr; }
+    .dist-grid { grid-template-columns: 1fr 1fr; }
+    body { padding: 32px 20px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .header-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow">MA311 — Bird's Eye View</div>
+    <h1>Probability &amp; <em>Statistics</em></h1>
+  </div>
+  <div class="header-right">
+    AV / B.Tech 5th Sem<br>
+    Ross + Walpole<br>
+    Exam Reference
+  </div>
+</div>
+
+<!-- SPOTLIGHT: The Guaranteed Question -->
+<div class="grid" style="margin-bottom:24px">
+  <div class="spotlight full">
+    <div class="card-header">
+      <span class="card-num">00</span>
+      <span class="card-title">The Guaranteed Question — t-Distribution Derivation</span>
+      <span class="badge badge-hot">Every Paper</span>
+    </div>
+    <div class="spotlight-body">
+      <p style="margin-bottom:12px">Appears in <strong>every single end-semester paper</strong> from 2019–2025. The form changes slightly but the structure is identical each time. Master this derivation.</p>
+      <div class="step"><div class="step-num">1</div><div>Given X, Y, U, V, W ~ iid N(μ, σ²). Note that <strong>X − Y ~ N(0, 2σ²)</strong>, so (X−Y)/σ√2 ~ N(0,1).</div></div>
+      <div class="step"><div class="step-num">2</div><div>Show that <strong>(U − μ)²/σ² ~ χ²(1)</strong> for each variable. The expression U² + V² + W² + 3μ² − 2μ(U+V+W) = (U−μ)² + (V−μ)² + (W−μ)² ~ σ²·χ²(3).</div></div>
+      <div class="step"><div class="step-num">3</div><div>Apply the definition: <strong>t(n) = Z / √(χ²(n)/n)</strong> where Z ~ N(0,1) is independent of the chi-squared variable.</div></div>
+      <div class="step"><div class="step-num">4</div><div>The constant 'a' in the question is chosen to make the N(0,1) part exactly correct — find it by normalizing (X−Y).</div></div>
+      <div class="formula-box">
+        t-definition: T = Z / √(V/n)  where Z ~ N(0,1), V ~ χ²(n), independent
+        χ²(n) definition: Sum of n independent squared standard normals
+        Key: (Xᵢ − μ)²/σ² ~ χ²(1),  so Σ(Xᵢ−μ)²/σ² ~ χ²(n)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PART 1: PROBABILITY FOUNDATIONS -->
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">01</span>
+      <span class="card-title">Axiomatic Foundations</span>
+      <span class="badge badge-theory">Theory</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>Sample space Ω, events, probability measure P</strong> — Kolmogorov's 3 axioms</li>
+      <li><strong>Conditional probability</strong> P(A|B) = P(A∩B)/P(B)</li>
+      <li><strong>Independence</strong> P(A∩B) = P(A)·P(B); extends to mutual independence</li>
+      <li><strong>Total Probability</strong> P(B) = Σ P(B|Aᵢ)·P(Aᵢ) over partition {Aᵢ}</li>
+      <li><strong>Bayes' Theorem</strong> P(Aᵢ|B) = P(B|Aᵢ)P(Aᵢ) / Σ P(B|Aⱼ)P(Aⱼ)</li>
+    </ul>
+    <div class="formula-box">
+      Bayes template: Prior × Likelihood / Evidence
+      "If defective, which manufacturer?" → classic exam form
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">02</span>
+      <span class="card-title">Random Variables &amp; Moments</span>
+      <span class="badge badge-core">Core</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>PMF/PDF, CDF</strong> — properties and how to verify validity (integral/sum = 1)</li>
+      <li><strong>E[X] = ∫x·f(x)dx</strong>, E[g(X)] = ∫g(x)f(x)dx</li>
+      <li><strong>Var(X) = E[X²] − (E[X])²</strong></li>
+      <li><strong>Moments</strong> — nth moment E[Xⁿ], central moments</li>
+      <li><strong>MGF</strong> M_X(t) = E[eᵗˣ] — uniquely identifies distribution</li>
+      <li>If MGF known: E[X] = M'(0), E[X²] = M''(0)</li>
+    </ul>
+    <div class="formula-box">
+      Key MGF results to memorise:
+      Binomial: (q + pe^t)^n
+      Poisson:  e^(λ(e^t − 1))
+      Normal:   e^(μt + σ²t²/2)
+    </div>
+  </div>
+</div>
+
+<!-- DISTRIBUTIONS -->
+<div class="card" style="margin-bottom:24px">
+  <div class="card-header">
+    <span class="card-num">03</span>
+    <span class="card-title">Standard Distributions — Complete Reference</span>
+    <span class="badge badge-hot">Heavy Weight</span>
+  </div>
+  <div class="dist-grid">
+    <div class="dist-item">
+      <div class="dist-name">Bernoulli / Binomial</div>
+      <div class="dist-notation">X ~ b(n, p)</div>
+      <div class="dist-facts">P(X=k) = C(n,k)pᵏqⁿ⁻ᵏ<br>E = np, Var = npq<br>Sum of Bernoullis</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Poisson</div>
+      <div class="dist-notation">X ~ p(λ)</div>
+      <div class="dist-facts">P(X=k) = e⁻λλᵏ/k!<br>E = λ, Var = λ<br>E[Xⁿ] = λE[(X+1)ⁿ⁻¹]</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Geometric</div>
+      <div class="dist-notation">X ~ g(p)</div>
+      <div class="dist-facts">P(X=k) = qᵏ⁻¹p<br>E = 1/p, Var = q/p²<br>Memoryless property</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Negative Binomial</div>
+      <div class="dist-notation">r-th success</div>
+      <div class="dist-facts">P(X=k) = C(k−1,r−1)pʳqᵏ⁻ʳ<br>E = r/p<br>k ≥ r</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Uniform</div>
+      <div class="dist-notation">X ~ U(a,b)</div>
+      <div class="dist-facts">f(x) = 1/(b−a)<br>E = (a+b)/2<br>Var = (b−a)²/12</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Exponential</div>
+      <div class="dist-notation">f(x) = λe⁻λx</div>
+      <div class="dist-facts">E = 1/λ, Var = 1/λ²<br>Memoryless: P(X>r+s|X>s)=P(X>r)<br>Min of exponentials → exponential</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Normal</div>
+      <div class="dist-notation">X ~ N(μ, σ²)</div>
+      <div class="dist-facts">aX+b ~ N(aμ+b, a²σ²)<br>Sum of independents → Normal<br>Standardise: Z=(X−μ)/σ</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">Chi-Squared</div>
+      <div class="dist-notation">X ~ χ²(n)</div>
+      <div class="dist-facts">Sum of n squared N(0,1)<br>E = n, Var = 2n<br>χ²(m)+χ²(n)=χ²(m+n) if indep.</div>
+    </div>
+    <div class="dist-item">
+      <div class="dist-name">t-Distribution</div>
+      <div class="dist-notation">T ~ t(n)</div>
+      <div class="dist-facts">Z/√(χ²(n)/n) where Z⊥χ²<br>Used when σ² unknown<br>t(∞) → N(0,1)</div>
+    </div>
+  </div>
+  <div class="formula-box" style="margin-top:14px">
+    APPROXIMATIONS (exam staple):  Binomial → Poisson when n large, p small, np=λ finite
+    Binomial/Poisson → Normal when n or λ large  (use continuity correction for discrete)
+    Normal approx: X ~ b(n,p) → Z = (X − np)/√(npq)
+  </div>
+</div>
+
+<!-- MULTIVARIATE -->
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">04</span>
+      <span class="card-title">Multivariate Random Variables</span>
+      <span class="badge badge-core">Core</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>Joint PDF/PMF</strong> f(x,y) — integrates/sums to 1</li>
+      <li><strong>Marginal</strong> fₓ(x) = ∫f(x,y)dy</li>
+      <li><strong>Conditional</strong> f_{X|Y}(x|y) = f(x,y)/f_Y(y)</li>
+      <li><strong>Independence</strong> ⟺ f(x,y) = fₓ(x)·f_Y(y)</li>
+      <li><strong>Conditional expectation</strong> E[X|Y=y] = ∫x·f_{X|Y}(x|y)dx</li>
+      <li><strong>Covariance</strong> Cov(X,Y) = E[XY] − E[X]E[Y]</li>
+      <li>If X,Y independent → Cov = 0 (not converse!)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">05</span>
+      <span class="card-title">Functions of Random Variables</span>
+      <span class="badge badge-core">Core</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>CDF method:</strong> Find P(Y≤y) = P(g(X)≤y), then differentiate</li>
+      <li><strong>Key result:</strong> If X ~ N(0,1), then X² ~ χ²(1)</li>
+      <li><strong>Linear combos:</strong> aX+bY: mean = aμₓ+bμ_Y, var = a²σₓ²+b²σ_Y² (if indep.)</li>
+      <li><strong>Sum of normals</strong> is normal (reproductive property)</li>
+      <li><strong>MGF method:</strong> If Mₓ(t) = M_Y(t) then X,Y same distribution</li>
+      <li><strong>3D normal distance</strong> → scaled chi-squared (missile/particle problems)</li>
+    </ul>
+    <div class="formula-box">
+      If X~N(0,σ²): X²/σ² ~ χ²(1)
+      X²+Y²+Z² (each N(0,σ²)) → σ²·χ²(3)
+    </div>
+  </div>
+</div>
+
+<!-- INEQUALITIES & LIMIT THEOREMS -->
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">06</span>
+      <span class="card-title">Inequalities</span>
+      <span class="badge badge-theory">Theory</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>Markov's:</strong> P(X≥a) ≤ E[X]/a for X≥0, a>0</li>
+      <li><strong>Chebyshev's:</strong> P(|X−μ|≥kσ) ≤ 1/k² — needs only mean & variance</li>
+      <li>Equivalently: P(|X−μ|&lt;kσ) ≥ 1 − 1/k²</li>
+      <li>Chebyshev is weaker but universal (no distribution assumed)</li>
+      <li>Exam trick: convert P(a &lt; X &lt; b) → symmetric form around μ, find k = (b−μ)/σ</li>
+    </ul>
+    <div class="formula-box">
+      Schwarz (Cauchy-Schwarz): [E(XY)]² ≤ E(X²)·E(Y²)
+      Chebyshev bound is always ≥ actual probability
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">07</span>
+      <span class="card-title">Limit Theorems</span>
+      <span class="badge badge-theory">Theory</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>WLLN:</strong> X̄ₙ →ᵖ μ as n→∞ (converges in probability)</li>
+      <li>Proof via Chebyshev: Var(X̄) = σ²/n → 0</li>
+      <li><strong>CLT:</strong> √n(X̄−μ)/σ → N(0,1) for iid finite variance</li>
+      <li>Applies to sums: Sₙ ~ approx N(nμ, nσ²)</li>
+      <li>Use for Binomial (large n), Poisson (large λ), any sum</li>
+    </ul>
+    <div class="formula-box">
+      CLT in practice: P(a &lt; X̄ &lt; b) ≈ Φ((b−μ)/(σ/√n)) − Φ((a−μ)/(σ/√n))
+      Consistency via WLLN: if E[θ̂]→θ and Var(θ̂)→0 then θ̂ is consistent
+    </div>
+  </div>
+</div>
+
+<!-- STATISTICS -->
+<div class="card" style="margin-bottom:24px">
+  <div class="card-header">
+    <span class="card-num">08</span>
+    <span class="card-title">Point Estimation</span>
+    <span class="badge badge-stats">Statistics</span>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="mini-section">Estimator Properties</div>
+      <ul class="concept-list">
+        <li><strong>Unbiased:</strong> E[θ̂] = θ</li>
+        <li><strong>Consistent:</strong> θ̂ₙ →ᵖ θ as n→∞. Sufficient: E[θ̂]→θ and Var(θ̂)→0</li>
+        <li><strong>Efficiency:</strong> smallest variance among unbiased estimators</li>
+        <li>Sample mean X̄ is unbiased + consistent for μ</li>
+        <li>S² = Σ(Xᵢ−X̄)²/(n−1) is unbiased for σ² (note n−1, not n)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="mini-section">Maximum Likelihood Estimation</div>
+      <ul class="concept-list">
+        <li>Likelihood L(θ) = Π f(xᵢ; θ)</li>
+        <li>Take log: ℓ(θ) = Σ log f(xᵢ; θ)</li>
+        <li>Solve dℓ/dθ = 0 for θ̂_MLE</li>
+        <li><strong>Poisson MLE:</strong> λ̂ = X̄ (sample mean)</li>
+        <li><strong>Normal MLE:</strong> μ̂ = X̄, σ̂² = Σ(Xᵢ−X̄)²/n (biased!)</li>
+        <li><strong>Exponential MLE:</strong> λ̂ = 1/X̄</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">09</span>
+      <span class="card-title">Confidence Intervals</span>
+      <span class="badge badge-stats">Statistics</span>
+    </div>
+    <ul class="concept-list">
+      <li><strong>σ known:</strong> X̄ ± z_{α/2} · σ/√n (use Z-table)</li>
+      <li><strong>σ unknown:</strong> X̄ ± t_{α/2, n−1} · S/√n (use t-table, df = n−1)</li>
+      <li><strong>95% CI</strong> → α = 0.05 → α/2 = 0.025 → z = 1.96 or t_{0.025, df}</li>
+      <li><strong>90% CI</strong> → α = 0.10 → α/2 = 0.05</li>
+      <li><strong>Sample size:</strong> n = (z_{α/2}·σ/E)² for max error E</li>
+      <li>Width = 2 × margin of error</li>
+    </ul>
+    <div class="formula-box">
+      Sampling distribution: X̄ ~ N(μ, σ²/n) exactly if pop. normal
+      (n−1)S²/σ² ~ χ²(n−1) always (for normal population)
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-num">10</span>
+      <span class="card-title">Hypothesis Testing</span>
+      <span class="badge badge-stats">Statistics</span>
+    </div>
+    <ul class="concept-list">
+      <li>H₀ (null) vs H₁ (alternative)</li>
+      <li><strong>Type I error (α):</strong> reject H₀ when true</li>
+      <li><strong>Type II error (β):</strong> fail to reject H₀ when false</li>
+      <li><strong>Test statistic Z</strong> = (X̄ − μ₀)/(σ/√n) for known σ</li>
+      <li><strong>Test statistic T</strong> = (X̄ − μ₀)/(S/√n) for unknown σ</li>
+      <li><strong>Chi-squared goodness of fit:</strong> χ² = Σ(Oᵢ−Eᵢ)²/Eᵢ, df = k−1−(params estimated)</li>
+    </ul>
+    <div class="formula-box">
+      GoF test: E_i = n·p_i (expected frequencies)
+      df = (classes − 1 − estimated parameters)
+      Reject H₀ if χ²_calc > χ²_{α, df}
+    </div>
+  </div>
+</div>
+
+<!-- SAMPLING DISTRIBUTIONS -->
+<div class="card" style="margin-bottom:24px">
+  <div class="card-header">
+    <span class="card-num">11</span>
+    <span class="card-title">Sampling Distributions — The Connection Web</span>
+    <span class="badge badge-link">Connections</span>
+  </div>
+  <div class="connections" style="margin-bottom: 16px;">
+    <div class="conn-pill"><span>Z =</span> (X̄−μ)/(σ/√n) ~ N(0,1)</div>
+    <div class="conn-pill"><span>χ²(n) =</span> Σ Zᵢ² where Zᵢ~N(0,1)</div>
+    <div class="conn-pill"><span>t(n) =</span> Z / √(χ²(n)/n)</div>
+    <div class="conn-pill"><span>(n−1)S²/σ² ~</span> χ²(n−1)</div>
+    <div class="conn-pill"><span>X̄ ⊥ S²</span> for normal populations</div>
+    <div class="conn-pill"><span>Poisson(λ) →</span> N(λ,λ) for large λ</div>
+    <div class="conn-pill"><span>b(n,p) →</span> p(np) for small p</div>
+    <div class="conn-pill"><span>b(n,p) →</span> N(np, npq) large n</div>
+  </div>
+  <div class="formula-box">
+    T = X̄ − μ / (S/√n) ~ t(n−1)   ← this is why t-table uses df = n−1
+    The independence of X̄ and S² is a deep result unique to normal populations — it justifies using them separately in inference.
+  </div>
+</div>
+
+<div class="footer-note">
+  <span>Texts: Ross (theory) · Walpole (problems) · Kreyszig Ch.24 (light supplement only)</span>
+  <span>Numerical methods sections excluded</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Equations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root { --bg: #faf8f3; --surface: #ffffff; --border: #e2ddd4; --ink: #1a1714; --ink-mid: #5a5245; --accent: #b8860b; --accent-bg: #fdf8ee; --radius: 12px; }
+        body { background: var(--bg); color: var(--ink); font-family: 'Nunito', sans-serif; line-height: 1.7; padding: 2rem 1rem; }
+        .container { max-width: 850px; margin: 0 auto; }
+        header { margin-bottom: 2.5rem; border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-family: 'Lora', serif; font-size: 2.2rem; }
+        .back-btn { text-decoration: none; color: var(--ink-mid); font-weight: 600; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; }
+        h2 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); }
+        .formula-block { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .step-box { background: #fdfdfd; border: 1px dashed var(--border); padding: 1.25rem; border-radius: 8px; margin-top: 1.5rem; }
+        
+        ol, ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+
+        .quiz-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 1.5rem; margin-top: 2.5rem; }
+        .quiz-option { display: block; background: var(--surface); border: 1px solid #cbd5e1; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem; cursor: pointer; transition: 0.2s; }
+        .quiz-option:hover { background: #f1f5f9; }
+        .submit-btn { background: var(--ink); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; margin-top: 1rem; cursor: pointer; }
+        .feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-weight: 600; display: none; }
+        .correct { background: #f0fdf4; color: #1e5c3a; border: 1px solid #bbf7d0; }
+        .incorrect { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+
+        body.dark-theme {
+            --bg: #121110;
+            --surface: #1c1a18;
+            --border: #33302b;
+            --ink: #e6e1da;
+            --ink-mid: #a69e94;
+            --accent: #dfa929;
+            --accent-bg: #26221a;
+        }
+        body { transition: background 0.3s, color 0.3s; }
+    </style>
+</head>
+<body>
+    <script>
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Linear Equations</h1>
+                <p style="color:var(--ink-mid)">Chapter 3: First-Order Integrating Factors</p>
+            </div>
+            <a href="de.html" class="back-btn">&larr; DE Hub</a>
+        </header>
+        <main>
+            
+            <div class="card">
+                <h2>1. The Linear Blueprint</h2>
+                <p>A first-order differential equation is linear if it can be written in a form where the dependent variable $y$ and its derivative $\frac{dy}{dx}$ are strictly to the first power, and are never multiplied together.</p>
+                <p>To solve a linear equation, it must first be mathematically normalized into the <b>Standard Form</b>:</p>
+                <div class="formula-block">
+                    $$\frac{dy}{dx} + P(x)y = Q(x)$$
+                </div>
+                <p><b>The Coefficient Trap:</b> If there is an algebraic function multiplied by $\frac{dy}{dx}$ (for example, $x\frac{dy}{dx}$), you <i>must</i> divide every single term in the equation by that function before identifying $P(x)$ and $Q(x)$. Failing to do this is the most common cause of calculation errors.</p>
+            </div>
+
+            <div class="card">
+                <h2>2. Mathematical Proof of the Integrating Factor</h2>
+                <p>The goal of this method is to multiply the standard equation by an unknown master function $I(x)$ such that the left side simplifies perfectly into a single product-rule derivative.</p>
+                
+                <div class="step-box">
+                    <b style="color:var(--accent)">Derivation Steps:</b><br>
+                    Multiply the standard form by an integrating factor $I(x)$:
+                    $$I(x)\frac{dy}{dx} + I(x)P(x)y = I(x)Q(x) \quad \text{--- (Eq. 1)}$$
+                    We want the left-hand side of Eq. 1 to match the expanded calculus <b>Product Rule</b> for $\frac{d}{dx}[I(x)y]$:
+                    $$\frac{d}{dx}[I(x)y] = I(x)\frac{dy}{dx} + I'(x)y \quad \text{--- (Eq. 2)}$$
+                    For Eq. 1 and Eq. 2 to be identical, look at the coefficients of $y$. We require:
+                    $$I'(x) = I(x)P(x) \implies \frac{dI}{dx} = I(x)P(x)$$
+                    Isolate variable $I$ and integrate via separation of variables to solve for it:
+                    $$\int \frac{1}{I} dI = \int P(x)dx \implies \ln|I| = \int P(x)dx$$
+                    Exponentiate both sides to uncover the master formula for the <b>Integrating Factor</b>:
+                    $$I(x) = e^{\int P(x)dx}$$
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>3. Operational Protocol & Verification</h2>
+                <p>Once $I(x)$ is computed, the entire differential equation condenses into:</p>
+                $$\frac{d}{dx}[I(x)y] = I(x)Q(x)$$
+                <p>You can then integrate both sides with respect to $x$ directly to isolate and extract $y$.</p>
+
+                <div class="step-box">
+                    <b style="color:var(--accent)">Calculus Lecture Example:</b><br>
+                    Find the general solution for: $\frac{dy}{dx} - \frac{1}{x}y = x \quad (x > 0)$<br><br>
+                    <b>Step 1: Check Form.</b> It is already in standard form. Identify components:<br>
+                    $$P(x) = -\frac{1}{x}, \quad Q(x) = x$$
+                    <b>Step 2: Compute $I(x)$.</b><br>
+                    $$I(x) = e^{\int -\frac{1}{x} dx} = e^{-\ln(x)} = e^{\ln(x^{-1})} = x^{-1} = \frac{1}{x}$$
+                    <b>Step 3: Collapse and Rewrite.</b> Multiply through and write as a product derivative:<br>
+                    $$\frac{d}{dx}\left[\frac{1}{x} \cdot y\right] = \frac{1}{x} \cdot x \implies \frac{d}{dx}\left[\frac{y}{x}\right] = 1$$
+                    <b>Step 4: Integrate and Isolate.</b><br>
+                    $$\int \frac{d}{dx}\left[\frac{y}{x}\right] dx = \int 1 dx \implies \frac{y}{x} = x + C$$
+                    $$y = x^2 + Cx$$
+                </div>
+            </div>
+
+            <div class="quiz-section">
+                <h3>Diagnostic Check: Integrating Factor Core</h3>
+                <p>Determine the correct Integrating Factor $I(x)$ for the following non-standard differential equation: $x\frac{dy}{dx} + 3y = x^2$</p>
+                
+                <label class="quiz-option"><input type="radio" name="q" value="A"> $I(x) = e^{3x}$</label>
+                <label class="quiz-option"><input type="radio" name="q" value="B"> $I(x) = x^3$</label>
+                <label class="quiz-option"><input type="radio" name="q" value="C"> $I(x) = \ln(x^3)$</label>
+                <label class="quiz-option"><input type="radio" name="q" value="D"> $I(x) = \frac{3}{x}$</label>
+                
+                <button class="submit-btn" onclick="checkAnswer('B')">Submit Diagnostic</button>
+                <div id="fb" class="feedback"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function checkAnswer(correct) {
+            const opts = document.getElementsByName('q');
+            let sel = null;
+            for(let o of opts) { if(o.checked) sel = o.value; }
+            const fb = document.getElementById('fb');
+            if(!sel) { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="Please select an operational profile before submitting."; 
+                fb.style.display="block"; 
+                return; 
+            }
+            if(sel === correct) { 
+                fb.className="feedback correct"; 
+                fb.innerHTML="<b>Correct!</b> First, normalize the equation by dividing all terms by $x$ to get standard form: $\\frac{dy}{dx} + \\frac{3}{x}y = x$. This identifies $P(x) = \\frac{3}{x}$. Integrating gives: $I(x) = e^{\\int \\frac{3}{x}dx} = e^{3\\ln(x)} = e^{\\ln(x^3)} = x^3$."; 
+                localStorage.setItem('ch2_complete', 'true');
+            }
+            else { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="<b>Incorrect.</b> Did you forget the Coefficient Trap? You must divide the entire equation by $x$ before identifying $P(x)$. Try isolating $\\frac{dy}{dx}$ first, then recalculate $e^{\\int P(x)dx}$."; 
+            }
+            fb.style.display="block";
+        }
+    </script>
+</body>
+</html>

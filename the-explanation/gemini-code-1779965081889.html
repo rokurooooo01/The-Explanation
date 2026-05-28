@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="expedition">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Explanations | Field Guide: Ordinary Differential Equations</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,600;1,400&family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Editorial Design Token Matrix (Nat Geo Inspired Aesthetic) */
+        :root {
+            --bg: #121416; 
+            --surface: #1a1d20; 
+            --border: #2c3136; 
+            --border-light: #22262a;
+            --ink: #f4f5f6; 
+            --ink-mid: #b2b9c0; 
+            --ink-soft: #767f89;
+            --accent: #ffc800; /* Iconic Editorial Yellow */
+            --accent-light: rgba(255, 200, 0, 0.08); 
+            --accent-dim: #cca000;
+            --success: #52b788;
+            --success-light: rgba(82, 183, 136, 0.15);
+            --error: #e63946;
+            --error-light: rgba(230, 57, 70, 0.15);
+            
+            --font-header: 'Cinzel', serif;
+            --font-display: 'Playfair Display', serif; 
+            --font-body: 'Work Sans', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            
+            --radius: 4px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 320px;
+        }
+
+        [data-theme="field-notes"] {
+            --bg: #f5f2eb; 
+            --surface: #ffffff; 
+            --border: #dcd7cd; 
+            --border-light: #eae5db;
+            --ink: #1c2022; 
+            --ink-mid: #4e5559; 
+            --ink-soft: #858d93;
+            --accent: #cc0000; /* Expedition Red Accent */
+            --accent-light: rgba(204, 0, 0, 0.05); 
+            --accent-dim: #990000;
+            --success: #2a6f97;
+            --success-light: rgba(42, 111, 151, 0.15);
+            --error: #b7094c;
+            --error-light: rgba(183, 9, 76, 0.1);
+            --shadow: 0 4px 20px rgba(28, 32, 34, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: var(--bg); 
+            color: var(--ink); 
+            font-family: var(--font-body); 
+            transition: var(--transition); 
+            line-height: 1.7;
+            display: flex;
+        }
+
+        /* Sidebar Navigation Journal Panel */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--surface);
+            border-right: 2px solid var(--border);
+            position: fixed;
+            top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 90;
+        }
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-brand {
+            font-family: var(--font-header);
+            font-size: 16px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-brand::before {
+            content: ""; display: inline-block; width: 10px; height: 16px; background-color: var(--accent);
+        }
+        .sidebar-subtitle {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* Search input box inside sidebar */
+        .sidebar-search-box {
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .sidebar-search {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chapter-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+        .chapter-link {
+            display: block;
+            padding: 14px 24px;
+            color: var(--ink-mid);
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .chapter-link:hover {
+            color: var(--ink);
+            background: var(--accent-light);
+        }
+        .chapter-link.active {
+            color: var(--ink);
+            background: var(--accent-light);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+        .chapter-link .chap-num {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--accent);
+            display: block;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        /* Progress Tracker Frame */
+        .progress-box {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            background: var(--border-light);
+        }
+        .progress-lbl {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--ink-soft);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .progress-bar-bg {
+            width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            width: 0%; height: 100%; background: var(--accent); transition: width 0.4s ease;
+        }
+
+        /* Main Editorial Content Framework */
+        .main-viewport {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            min-height: 100vh;
+            padding: 60px 8% 100px;
+            max-width: 1200px;
+        }
+
+        /* Content Top Controller */
+        .content-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+        .nav-back-link {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--ink-soft);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+        .nav-back-link:hover { color: var(--accent); }
+
+        /* Typography layout matching book reading styling */
+        .chapter-view { display: none; }
+        .chapter-view.active { display: block; animation: fadeIn 0.4s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .meta-tagline {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        h1.display-title {
+            font-family: var(--font-display);
+            font-size: 42px;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        .editorial-p {
+            font-family: 'Lora', serif;
+            font-size: 17px;
+            color: var(--ink-mid);
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+        .editorial-p strong { color: var(--ink); }
+
+        /* Callout Box Formula Schematics */
+        .equation-callout {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            padding: 24px;
+            margin: 32px 0;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        /* Interactive Collapsible Verification Block */
+        .proof-block {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin: 24px 0;
+            background: var(--surface);
+            overflow: hidden;
+        }
+        .proof-trigger {
+            padding: 16px 24px;
+            background: var(--surface);
+            cursor: pointer;
+            font-family: var(--font-header);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+        }
+        .proof-block.open .proof-trigger { border-bottom-color: var(--border); }
+        .proof-content {
+            padding: 24px;
+            display: none;
+            background: var(--bg);
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Field Test Quizzes Station */
+        .quiz-station {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin: 48px 0;
+            box-shadow: var(--shadow);
+        }
+        .quiz-station h3 {
+            font-family: var(--font-header);
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: var(--ink);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+        .quiz-option {
+            display: block;
+            position: relative;
+            padding: 14px 16px 14px 44px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--ink-mid);
+            transition: var(--transition);
+            user-select: none;
+        }
+        .quiz-option:hover { border-color: var(--border); color: var(--ink); }
+        .quiz-option input { position: absolute; opacity: 0; cursor: pointer; }
+        
+        .radio-dot {
+            position: absolute; top: 15px; left: 16px;
+            height: 16px; width: 16px;
+            background-color: transparent;
+            border: 2px solid var(--ink-soft);
+            border-radius: 50%;
+        }
+        .quiz-option input:checked ~ .radio-dot { border-color: var(--accent); background-color: var(--accent); }
+        .quiz-option input:checked ~ span:not(.radio-dot) { color: var(--ink); font-weight: 500; }
+
+        .quiz-submit-btn {
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--ink);
+            font-family: var(--font-header);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .quiz-submit-btn:hover { background: var(--accent); color: #000000 !important; border-color: var(--accent); }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: var(--radius);
+            font-family: 'Lora', serif;
+            font-size: 14px;
+            display: none;
+        }
+        .quiz-feedback.correct { background: var(--success-light); border: 1px solid var(--success); color: var(--ink); }
+        .quiz-feedback.incorrect { background: var(--error-light); border: 1px solid var(--error); color: var(--ink); }
+
+        /* Bottom Pagination controls */
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+        }
+        .pag-btn {
+            padding: 12px 24px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--ink-mid);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+        .pag-btn:hover { border-color: var(--accent); color: var(--ink); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-brand">The Explanations</a>
+            <div class="sidebar-subtitle">Field Journal Compendium</div>
+        </div>
+
+        <div class="sidebar-search-box">
+            <input type="text" id="sidebar-search" class="sidebar-search" placeholder="Filter ledger chapters...">
+        </div>
+
+        <nav class="chapter-list" id="chapter-list-container">
+            <div class="chapter-link active" onclick="jumpToChapter('introduction')">
+                <span class="chap-num">Log Entry 00</span>
+                The Scope of Continuums
+            </div>
+            <div class="chapter-link" onclick="jumpToChapter('first-order-linear')">
+                <span class="chap-num">Log Entry 01</span>
+                Integrating Factors & Linear Boundaries
+            </div>
+            <div class="chapter-link" onclick="jumpToChapter('exact-systems')">
+                <span class="chap-num">Log Entry 02</span>
+                Exact Systems & Partial Equivalence
+            </div>
+            <div class="chapter-link" onclick="jumpToChapter('non-homogeneous')">
+                <span class="chap-num">Log Entry 03</span>
+                Non-Homogeneous Independent Forms
+            </div>
+            <div class="chapter-link" onclick="jumpToChapter('bernoulli-reductions')">
+                <span class="chap-num">Log Entry 04</span>
+                Bernoulli Equations & Reductions
+            </div>
+        </nav>
+
+        <div class="progress-box">
+            <div class="progress-lbl">
+                <span>Journal Scope Explored</span>
+                <span id="progress-percent">20%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-viewport">
+        <header class="content-nav">
+            <a href="index.html" class="nav-back-link">&larr; Return to Telemetry Hub</a>
+            <div class="sidebar-subtitle">Volume I</div>
+        </header>
+
+        <article class="chapter-view active" id="chap-introduction">
+            <span class="meta-tagline">Log Entry 00 &bull; Foundations</span>
+            <h1 class="display-title">The Anatomy of Mathematical Change</h1>
+            <p class="editorial-p">To observe the natural universe is to map continuous flux. Ordinary Differential Equations (ODEs) serve as the fundamental lexicon for capturing rates of change where a single independent variable holds sway.</p>
+            
+            <p class="editorial-p">Before calculating solution thresholds, an explorer must distinguish structural parameters. The <strong>Order</strong> of a differential system corresponds to the highest derivative within the system matrix. Conversely, the <strong>Degree</strong> constitutes the algebraic exponent applied directly to that dominant derivative component.</p>
+
+            <div class="quiz-station">
+                <h3>Field Check 00 &bull; Structural Classification</h3>
+                <p class="editorial-p" style="font-size: 15px; margin-bottom: 16px;">Determine the definitive Order and Degree parameters of the following structural relation:</p>
+                <div style="text-align:center; margin: 20px 0; font-size:18px;">
+                    $$\left(\frac{d^2y}{dx^2}\right)^3 + 5x\left(\frac{dy}{dx}\right)^7 - y = 0$$
+                </div>
+                <div class="options-container">
+                    <label class="quiz-option">
+                        <input type="radio" name="q0" value="A">
+                        <span class="radio-dot"></span><span>Order: 7, Degree: 1</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q0" value="B">
+                        <span class="radio-dot"></span><span>Order: 2, Degree: 3</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q0" value="C">
+                        <span class="radio-dot"></span><span>Order: 1, Degree: 7</span>
+                    </label>
+                </div>
+                <button class="quiz-submit-btn" onclick="verifyFieldQuiz('q0', 'B')">Log Answer Metrics</button>
+                <div class="quiz-feedback" id="feedback-q0"></div>
+            </div>
+        </article>
+
+        <article class="chapter-view" id="chap-first-order-linear">
+            <span class="meta-tagline">Log Entry 01 &bull; Standard Solvers</span>
+            <h1 class="display-title">Integrating Factors & Linear Boundaries</h1>
+            <p class="editorial-p">A first-order linear differential form represents tracking along smooth paths where variations stay proportional. When formatted to unity standard layout, the system conforms to the following archetype:</p>
+            
+            <div class="equation-callout">
+                $$\frac{dy}{dx} + P(x)y = Q(x)$$
+            </div>
+
+            <p class="editorial-p">To resolve such continuous chains, an artificial expansion value known as the <strong>Integrating Factor</strong> (\(I(x)\)) is calculated. This factor seamlessly collapses the left side of the relation into a single executable derivative product.</p>
+
+            <div class="equation-callout">
+                $$I(x) = e^{\int P(x)dx}$$
+            </div>
+
+            <div class="proof-block">
+                <div class="proof-trigger" onclick="toggleProof(this)">
+                    <span>Examine Practical Ledger Proof &bull; \(x\frac{dy}{dx} - y = x^2\)</span>
+                    <span>[Toggle Sheet]</span>
+                </div>
+                <div class="proof-content">
+                    <p class="editorial-p">1. Force standard form alignment by dividing the expression by the leading coefficient \(x\):</p>
+                    $$\frac{dy}{dx} - \frac{1}{x}y = x \quad \implies \quad P(x) = -\frac{1}{x}$$
+                    <p class="editorial-p">2. Compute the integrating coefficient via exponential integration:</p>
+                    $$I(x) = e^{\int -\frac{1}{x} dx} = e^{-\ln x} = e^{\ln(x^{-1})} = \frac{1}{x}$$
+                    <p class="editorial-p">3. Distribute the scalar factor across the system and collect terms:</p>
+                    $$\frac{1}{x}\frac{dy}{dx} - \frac{1}{x^2}y = 1 \implies \frac{d}{dx}\left[\frac{y}{x}\right] = 1$$
+                    <p class="editorial-p">4. Integrate across both vector bounds to uncover the definitive equation path:</p>
+                    $$\frac{y}{x} = x + C \implies y = x^2 + Cx$$
+                </div>
+            </div>
+
+            <div class="quiz-station">
+                <h3>Field Check 01 &bull; Integrating Factors</h3>
+                <p class="editorial-p" style="font-size: 15px; margin-bottom: 16px;">What is the required structural Integrating Factor for the following tracking equation?</p>
+                <div style="text-align:center; margin: 20px 0; font-size:18px;">
+                    $$x\frac{dy}{dx} - 2y = x^4 e^x$$
+                </div>
+                <div class="options-container">
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="A">
+                        <span class="radio-dot"></span><span>\(I(x) = x^2\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="B">
+                        <span class="radio-dot"></span><span>\(I(x) = e^{-2x}\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="C">
+                        <span class="radio-dot"></span><span>\(I(x) = \frac{1}{x^2}\)</span>
+                    </label>
+                </div>
+                <button class="quiz-submit-btn" onclick="verifyFieldQuiz('q1', 'C')">Log Answer Metrics</button>
+                <div class="quiz-feedback" id="feedback-q1"></div>
+            </div>
+        </article>
+
+        <article class="chapter-view" id="chap-exact-systems">
+            <span class="meta-tagline">Log Entry 02 &bull; Conservative Fields</span>
+            <h1 class="display-title">Exact Systems & Partial Equivalence</h1>
+            <p class="editorial-p">An exact differential equation signals that the tracking system aligns precisely with a total differential block of a multi-variable function. Its standard structural format looks like this:</p>
+            
+            <div class="equation-callout">
+                $$M(x,y)dx + N(x,y)dy = 0$$
+            </div>
+
+            <p class="editorial-p">An exact system satisfies standard integrability criteria because its cross-partial derivatives match perfectly. This matching demonstrates path independence within its geometric space:</p>
+
+            <div class="equation-callout">
+                $$\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$$
+            </div>
+
+            <div class="proof-block">
+                <div class="proof-trigger" onclick="toggleProof(this)">
+                    <span>Examine Practical Ledger Proof &bull; \((3x^2y+2)dx + (x^3+2y)dy = 0\)</span>
+                    <span>[Toggle Sheet]</span>
+                </div>
+                <div class="proof-content">
+                    <p class="editorial-p">1. Extract functions and verify cross-partial derivative alignment:</p>
+                    $$M = 3x^2y + 2 \implies \frac{\partial M}{\partial y} = 3x^2$$
+                    $$N = x^3 + 2y \implies \frac{\partial N}{\partial x} = 3x^2$$
+                    <p class="editorial-p">Because values map identically, the system is confirmed **Exact**.</p>
+                    <p class="editorial-p">2. Integrate \(M\) with respect to \(x\) to build your base function framework:</p>
+                    $$F(x,y) = \int(3x^2y+2)dx = x^3y + 2x + g(y)$$
+                    <p class="editorial-p">3. Differentiate your framework with respect to \(y\) and match it with your \(N\) function component:</p>
+                    $$\frac{\partial F}{\partial y} = x^3 + g'(y) = x^3 + 2y \implies g'(y) = 2y \implies g(y) = y^2$$
+                    <p class="editorial-p">4. Combine components to state the structural constant relation:</p>
+                    $$x^3y + 2x + y^2 = C$$
+                </div>
+            </div>
+
+            <div class="quiz-station">
+                <h3>Field Check 02 &bull; Condition Verification</h3>
+                <p class="editorial-p" style="font-size: 15px; margin-bottom: 16px;">Calculate the cross-partial mapping value \(\partial M/\partial y\) for the following functional layout:</p>
+                <div style="text-align:center; margin: 20px 0; font-size:18px;">
+                    $$(6x^2y^3 + \cos x)dx + (6x^3y^2 - e^y)dy = 0$$
+                </div>
+                <div class="options-container">
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="A">
+                        <span class="radio-dot"></span><span>\(18x^2y^2\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="B">
+                        <span class="radio-dot"></span><span>\(12xy^3\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="C">
+                        <span class="radio-dot"></span><span>\(18x^3y^2\)</span>
+                    </label>
+                </div>
+                <button class="quiz-submit-btn" onclick="verifyFieldQuiz('q2', 'A')">Log Answer Metrics</button>
+                <div class="quiz-feedback" id="feedback-q2"></div>
+            </div>
+        </article>
+
+        <article class="chapter-view" id="chap-non-homogeneous">
+            <span class="meta-tagline">Log Entry 03 &bull; Axis Rotations</span>
+            <h1 class="display-title">Non-Homogeneous Independent Forms</h1>
+            <p class="editorial-p">When tracking intersections along unmatched linear boundaries, the structural equations require shifting to cross clean zero-points. These equations take the form:</p>
+            
+            <div class="equation-callout">
+                $$(a_1x + b_1y + c_1)dx + (a_2x + b_2y + c_2)dy = 0$$
+            </div>
+
+            <p class="editorial-p">When the system determinant is non-zero (\(a_1b_2 - a_2b_1 \neq 0\)), these boundaries are <strong>Linearly Independent</strong>. This means they intersect at a single coordinates location \((h, k)\) in space. Shifting your coordinates to this intersection spot clears out the constants, converting the equation into a solvable homogeneous system.</p>
+
+            <div class="quiz-station">
+                <h3>Field Check 03 &bull; Center Intersections</h3>
+                <p class="editorial-p" style="font-size: 15px; margin-bottom: 16px;">Identify the structural coordinate center transformation point \((h, k)\) required to solve this linear system:</p>
+                <div style="text-align:center; margin: 20px 0; font-size:18px;">
+                    $$(x + y - 4)dx + (x - y + 2)dy = 0$$
+                </div>
+                <div class="options-container">
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="A">
+                        <span class="radio-dot"></span><span>\((1, 3)\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="B">
+                        <span class="radio-dot"></span><span>\((2, 2)\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="C">
+                        <span class="radio-dot"></span><span>\((-1, 5)\)</span>
+                    </label>
+                </div>
+                <button class="quiz-submit-btn" onclick="verifyFieldQuiz('q3', 'A')">Log Answer Metrics</button>
+                <div class="quiz-feedback" id="feedback-q3"></div>
+            </div>
+        </article>
+
+        <article class="chapter-view" id="chap-bernoulli-reductions">
+            <span class="meta-tagline">Log Entry 04 &bull; Power Scales</span>
+            <h1 class="display-title">Bernoulli Equations & Reductions</h1>
+            <p class="editorial-p">Nature often drops linear bounds entirely. The Bernoulli equation represents a specific class of non-linear tracking models. It features a non-linear term powered by an exponential scaling factor \(n\):</p>
+            
+            <div class="equation-callout">
+                $$\frac{dy}{dx} + P(x)y = Q(x)y^n$$
+            </div>
+
+            <p class="editorial-p">To break this non-linear lock, we use a custom substitution step. Introducing the variable \(v = y^{1-n}\) scales down the exponents, transforming the equation back into a standard first-order linear form.</p>
+
+            <div class="quiz-station">
+                <h3>Field Check 04 &bull; Variable Substitution Transformations</h3>
+                <p class="editorial-p" style="font-size: 15px; margin-bottom: 16px;">Which exact substitution profile transforms the following expression into a linear equation?</p>
+                <div style="text-align:center; margin: 20px 0; font-size:18px;">
+                    $$\frac{dy}{dx} - \frac{y}{x} = x^2 y^4$$
+                </div>
+                <div class="options-container">
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="A">
+                        <span class="radio-dot"></span><span>\(v = y^{-3}\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="B">
+                        <span class="radio-dot"></span><span>\(v = y^{-4}\)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="C">
+                        <span class="radio-dot"></span><span>\(v = y^3\)</span>
+                    </label>
+                </div>
+                <button class="quiz-submit-btn" onclick="verifyFieldQuiz('q4', 'A')">Log Answer Metrics</button>
+                <div class="quiz-feedback" id="feedback-q4"></div>
+            </div>
+        </article>
+
+        <footer class="pagination-bar">
+            <button class="pag-btn" id="btn-prev-page" onclick="stepChapter(-1)">&larr; Previous Log</button>
+            <button class="pag-btn" id="btn-next-page" onclick="stepChapter(1)">Next Log &rarr;</button>
+        </footer>
+    </main>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // Array index sequence of chapter logs
+            const chaptersOrder = ['introduction', 'first-order-linear', 'exact-systems', 'non-homogeneous', 'bernoulli-reductions'];
+            let activeChapterIndex = 0;
+
+            // Telemetry store layout configuration 
+            let telemetryStore = { pageViews: {}, quizzesSubmitted: 0 };
+            
+            function loadTelemetryStore() {
+                try {
+                    const stored = localStorage.getItem('de_telemetry_store');
+                    if (stored) telemetryStore = JSON.parse(stored);
+                } catch(e) { console.error("Telemetry interface error.", e); }
+            }
+
+            function syncTelemetryToDisk() {
+                localStorage.setItem('de_telemetry_store', JSON.stringify(telemetryStore));
+            }
+
+            /* ================= THEME LIFECYCLE MANAGEMENT ================= */
+            function syncGlobalTheme() {
+                const currentTheme = localStorage.getItem('explanations-theme') || 'expedition';
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            }
+
+            // Sync theme when loading or if altered on dashboard
+            syncGlobalTheme();
+            window.addEventListener('storage', syncGlobalTheme);
+
+            /* ================= JOURNAL ROUTING ENGINE ================= */
+            window.jumpToChapter = function(chapterId) {
+                const idx = chaptersOrder.indexOf(chapterId);
+                if (idx === -1) return;
+                
+                activeChapterIndex = idx;
+                
+                // Toggle active visualization view
+                document.querySelectorAll('.chapter-view').forEach(view => view.classList.remove('active'));
+                const targetedView = document.getElementById(`chap-${chapterId}`);
+                if (targetedView) targetedView.classList.add('active');
+
+                // Adjust left sidebar navigation links state
+                const links = document.querySelectorAll('.chapter-link');
+                links.forEach((link, lIdx) => {
+                    if (lIdx === idx) link.classList.add('active');
+                    else link.classList.remove('active');
+                });
+
+                // Update bottom pagination buttons
+                document.getElementById('btn-prev-page').style.visibility = (idx === 0) ? 'hidden' : 'visible';
+                document.getElementById('btn-next-page').textContent = (idx === chaptersOrder.length - 1) ? 'Hub Terminal' : 'Next Log \u2192';
+
+                // Scroll viewport cleanly up to content header
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Run analytics metric processes
+                updateProgressMetrics();
+                
+                if (!telemetryStore.pageViews) telemetryStore.pageViews = {};
+                telemetryStore.pageViews[chapterId] = (telemetryStore.pageViews[chapterId] || 0) + 1;
+                syncTelemetryToDisk();
+            };
+
+            window.stepChapter = function(direction) {
+                const nextIdx = activeChapterIndex + direction;
+                if (nextIdx >= 0 && nextIdx < chaptersOrder.length) {
+                    jumpToChapter(chaptersOrder[nextIdx]);
+                } else if (nextIdx === chaptersOrder.length) {
+                    // Send user home if they click next past the final chapter
+                    window.location.href = 'index.html';
+                }
+            };
+
+            function updateProgressMetrics() {
+                const checkedPercentage = Math.round(((activeChapterIndex + 1) / chaptersOrder.length) * 100);
+                document.getElementById('progress-percent').textContent = `${checkedPercentage}%`;
+                document.getElementById('progress-fill').style.width = `${checkedPercentage}%`;
+            }
+
+            /* ================= ACCORDION EXTENSION ================= */
+            window.toggleProof = function(triggerElement) {
+                const parentBlock = triggerElement.parentElement;
+                const bodyContainer = parentBlock.querySelector('.proof-content');
+                
+                if (parentBlock.classList.contains('open')) {
+                    parentBlock.classList.remove('open');
+                    bodyContainer.style.display = 'none';
+                } else {
+                    parentBlock.classList.add('open');
+                    bodyContainer.style.display = 'block';
+                    // Re-render MathJax variables if unpacked
+                    if (window.MathJax && window.MathJax.typeset) {
+                        window.MathJax.typeset();
+                    }
+                }
+            };
+
+            /* ================= INTERACTIVE FIELD CHECK LOGIC ================= */
+            window.verifyFieldQuiz = function(quizName, correctChoice) {
+                const options = document.getElementsByName(quizName);
+                let targetedValue = null;
+                options.forEach(opt => { if (opt.checked) targetedValue = opt.value; });
+
+                const feedbackBox = document.getElementById(`feedback-${quizName}`);
+                if (!feedbackBox) return;
+
+                if (!targetedValue) {
+                    feedbackBox.textContent = "Please mark a field entry observation before evaluation.";
+                    feedbackBox.className = "quiz-feedback incorrect";
+                    feedbackBox.style.display = "block";
+                    return;
+                }
+
+                // Push tracking metric back through pipeline
+                loadTelemetryStore();
+                telemetryStore.quizzesSubmitted = (telemetryStore.quizzesSubmitted || 0) + 1;
+                syncTelemetryToDisk();
+
+                if (targetedValue === correctChoice) {
+                    feedbackBox.className = "quiz-feedback correct";
+                    if (quizName === 'q0') feedbackBox.innerHTML = "<strong>Verification Complete:</strong> Correct! The highest derivative order inside this expression is 2, and its attached matching algebraic degree calculation evaluates to 3.";
+                    if (quizName === 'q1') feedbackBox.innerHTML = "<strong>Verification Complete:</strong> Correct! Dividing standard alignment values shows \(P(x) = -2/x\). Exponential mapping yields \(e^{\int -2/x dx} = e^{-2\ln x} = x^{-2} = 1/x^2\).";
+                    if (quizName === 'q2') feedbackBox.innerHTML = "<strong>Verification Complete:</strong> Correct! Differentiating partial component variables with respect to \(y\) treats \(x\) elements as standard constants, uncovering \(18x^2y^2\).";
+                    if (quizName === 'q3') feedbackBox.innerHTML = "<strong>Verification Complete:</strong> Correct! Solving \(x+y-4=0\) and \(x-y+2=0\) simultaneously establishes a singular coordinate center origin at \((1,3)\).";
+                    if (quizName === 'q4') feedbackBox.innerHTML = "<strong>Verification Complete:</strong> Correct! With an absolute exponent of \(n=4\), setting substitution framework variable parameter \(v = y^{1-n}\) maps precisely to \(y^{-3}\).";
+                } else {
+                    feedbackBox.className = "quiz-feedback incorrect";
+                    if (quizName === 'q0') feedbackBox.innerHTML = "<strong>Log Refused:</strong> Incorrect structure classification. Locate the single component displaying the deepest derivative step first to track order values.";
+                    if (quizName === 'q1') feedbackBox.innerHTML = "<strong>Log Refused:</strong> Incorrect factor calculation. Always isolate the leading \(\frac{dy}{dx}\) term completely before integrating the functional power values.";
+                    if (quizName === 'q2') feedbackBox.innerHTML = "<strong>Log Refused:</strong> Incorrect validation step. Apply power calculus properties purely to the \(y\) parameters, ignoring unrelated \(x\) terms.";
+                    if (quizName === 'q3') feedbackBox.innerHTML = "<strong>Log Refused:</strong> Incorrect translation intersection. Map the exact point where both equations balance down to matching zero points simultaneously.";
+                    if (quizName === 'q4') feedbackBox.innerHTML = "<strong>Log Refused:</strong> Incorrect reduction profile. Review the formula transformation variable specification model: \(v = y^{1-n}\).";
+                }
+                feedbackBox.style.display = "block";
+            };
+
+            /* ================= LOG SEARCH FILTER ================= */
+            const searchBar = document.getElementById('sidebar-search');
+            if (searchBar) {
+                searchBar.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase().trim();
+                    const links = document.querySelectorAll('.chapter-link');
+                    
+                    links.forEach(link => {
+                        const contentText = link.textContent.toLowerCase();
+                        if (contentText.includes(query)) {
+                            link.style.display = 'block';
+                        } else {
+                            link.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Fire up initial systems logs setup
+            loadTelemetryStore();
+            jumpToChapter('introduction');
+        })();
+    </script>
+</body>
+</html>

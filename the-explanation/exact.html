@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exact Differential Equations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root { --bg: #faf8f3; --surface: #ffffff; --border: #e2ddd4; --ink: #1a1714; --ink-mid: #5a5245; --accent: #b8860b; --accent-bg: #fdf8ee; --radius: 12px; }
+        body { background: var(--bg); color: var(--ink); font-family: 'Nunito', sans-serif; line-height: 1.7; padding: 2rem 1rem; }
+        .container { max-width: 850px; margin: 0 auto; }
+        header { margin-bottom: 2.5rem; border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-family: 'Lora', serif; font-size: 2.2rem; }
+        .back-btn { text-decoration: none; color: var(--ink-mid); font-weight: 600; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; }
+        h2 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-family: 'Lora', serif; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--ink); }
+        .formula-block { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+        .step-box { background: #fdfdfd; border: 1px dashed var(--border); padding: 1.25rem; border-radius: 8px; margin-top: 1.5rem; }
+        
+        ol, ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+
+        .quiz-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 1.5rem; margin-top: 2.5rem; }
+        .quiz-option { display: block; background: var(--surface); border: 1px solid #cbd5e1; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem; cursor: pointer; transition: 0.2s; }
+        .quiz-option:hover { background: #f1f5f9; }
+        .submit-btn { background: var(--ink); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; margin-top: 1rem; cursor: pointer; }
+        .feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; font-weight: 600; display: none; }
+        .correct { background: #f0fdf4; color: #1e5c3a; border: 1px solid #bbf7d0; }
+        .incorrect { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+
+        body.dark-theme {
+            --bg: #121110;
+            --surface: #1c1a18;
+            --border: #33302b;
+            --ink: #e6e1da;
+            --ink-mid: #a69e94;
+            --accent: #dfa929;
+            --accent-bg: #26221a;
+        }
+        body { transition: background 0.3s, color 0.3s; }
+    </style>
+</head>
+<body>
+    <script>
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Exact Differential Equations</h1>
+                <p style="color:var(--ink-mid)">Chapter 5: Multivariable Cross-Partial Validation</p>
+            </div>
+            <a href="de.html" class="back-btn">&larr; DE Hub</a>
+        </header>
+        <main>
+            
+            <div class="card">
+                <h2>1. The Total Differential & Exactness</h2>
+                <p>An equation of the form $M(x,y)dx + N(x,y)dy = 0$ is considered <b>Exact</b> if it is the total differential of some hidden multivariable function $f(x,y) = C$. By calculus definition, the total differential is:</p>
+                <div class="formula-block">
+                    $$df = \frac{\partial f}{\partial x}dx + \frac{\partial f}{\partial y}dy = 0$$
+                </div>
+                <p>This implies that $M(x,y)$ is the partial derivative of $f$ with respect to $x$, and $N(x,y)$ is the partial derivative of $f$ with respect to $y$. To prove an equation is exact without knowing $f$ yet, we rely on Clairaut's Theorem of mixed partial derivatives.</p>
+                <div class="formula-block" style="border-left-color: #2e5c8a; background: #f0f5fa;">
+                    <b>The Exactness Test:</b>
+                    $$\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$$
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>2. Function Recovery Protocol</h2>
+                <p>Once you verify exactness, your mission is to reconstruct the original function $f(x,y)$ from its partial derivatives. The operational loop is as follows:</p>
+                <ol>
+                    <li><b>Integrate $M$:</b> Integrate $M(x,y)$ with respect to $x$ (treating $y$ as a constant). Because $y$ was held constant, your integration constant is an unknown function of $y$, denoted $g(y)$.</li>
+                    <li><b>Differentiate:</b> Take the partial derivative of your new $f(x,y)$ with respect to $y$.</li>
+                    <li><b>Equate & Isolate:</b> Set this derivative equal to $N(x,y)$. This allows you to solve for $g'(y)$ by canceling out identical terms.</li>
+                    <li><b>Integrate $g'(y)$:</b> Integrate $g'(y)$ with respect to $y$ to find the missing component $g(y)$.</li>
+                    <li><b>Final Assembly:</b> Write the complete implicit solution as $f(x,y) = C$.</li>
+                </ol>
+            </div>
+
+            <div class="card">
+                <h2>3. Comprehensive Lecture Example</h2>
+                <p>Let's map out the function recovery process on a mixed algebraic system.</p>
+
+                <div class="step-box">
+                    <b style="color:var(--accent)">Problem Dossier:</b> Solve $(2xy - 9x^2)dx + (x^2 + 2y + 1)dy = 0$.<br><br>
+                    
+                    <b>Step 1: Execute the Exactness Test.</b><br>
+                    Identify $M = 2xy - 9x^2$ and $N = x^2 + 2y + 1$.<br>
+                    $$\frac{\partial M}{\partial y} = 2x$$
+                    $$\frac{\partial N}{\partial x} = 2x$$
+                    Since $2x = 2x$, the system is <b>Exact</b>.<br><br>
+                    
+                    <b>Step 2: Integrate $M$ with respect to $x$.</b><br>
+                    $$f(x,y) = \int (2xy - 9x^2) \partial x = x^2y - 3x^3 + g(y)$$<br>
+                    
+                    <b>Step 3: Differentiate $f(x,y)$ with respect to $y$ and equate to $N$.</b><br>
+                    $$\frac{\partial f}{\partial y} = x^2 + g'(y)$$
+                    Set this equal to our original $N(x,y)$ matrix:<br>
+                    $$x^2 + g'(y) = x^2 + 2y + 1$$
+                    The $x^2$ terms perfectly cancel (this *must* happen if exact), leaving:<br>
+                    $$g'(y) = 2y + 1$$<br>
+
+                    <b>Step 4: Integrate to recover $g(y)$.</b><br>
+                    $$g(y) = \int (2y + 1) dy = y^2 + y$$<br>
+
+                    <b>Step 5: Final Assembly.</b> Assemble the components into $f(x,y) = C$.<br>
+                    $$x^2y - 3x^3 + y^2 + y = C$$
+                </div>
+            </div>
+
+            <div class="quiz-section">
+                <h3>Diagnostic Check: Cross-Partial Validation</h3>
+                <p>Determine the status of the following differential equation: $(2xy^2 - 3)dx + (2x^2y + 4)dy = 0$.</p>
+                
+                <label class="quiz-option"><input type="radio" name="q" value="A"> Not Exact. $\frac{\partial M}{\partial y} = 4xy$ but $\frac{\partial N}{\partial x} = 2xy$.</label>
+                <label class="quiz-option"><input type="radio" name="q" value="B"> Exact. Both partial derivatives equal $4xy$.</label>
+                <label class="quiz-option"><input type="radio" name="q" value="C"> Exact. Both partial derivatives equal $2x^2$.</label>
+                <label class="quiz-option"><input type="radio" name="q" value="D"> Not Exact. The system contains non-linear terms.</label>
+                
+                <button class="submit-btn" onclick="checkAnswer('B')">Submit Diagnostic</button>
+                <div id="fb" class="feedback"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function checkAnswer(correct) {
+            const opts = document.getElementsByName('q');
+            let sel = null;
+            for(let o of opts) { if(o.checked) sel = o.value; }
+            const fb = document.getElementById('fb');
+            if(!sel) { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="Please run the cross-partial diagnostic before submitting."; 
+                fb.style.display="block"; 
+                return; 
+            }
+            if(sel === correct) { 
+                fb.className="feedback correct"; 
+                fb.innerHTML="<b>Correct!</b> $M = 2xy^2 - 3$. Differentiating with respect to $y$ gives $4xy$. Next, $N = 2x^2y + 4$. Differentiating with respect to $x$ also gives $4xy$. The system is perfectly balanced and exact."; 
+                localStorage.setItem('ch3_complete', 'true');
+            }
+            else { 
+                fb.className="feedback incorrect"; 
+                fb.innerHTML="<b>Incorrect.</b> Remember the cross-partial rule. Differentiate the $dx$ term ($M$) with respect to $y$. Treat $x$ as a constant. Then differentiate the $dy$ term ($N$) with respect to $x$. Compare the results."; 
+            }
+            fb.style.display="block";
+        }
+    </script>
+</body>
+</html>
